@@ -18,7 +18,7 @@ public class CSMADemo {
 	public static final String Y_AXIS_GRAPH_TITLE = "Client Number";
 
 	public static long THREAD_START_INTERVAL = 500L;
-	public static int THREAD_COUNT = 10;
+	public static int THREAD_COUNT = 50;
 	public static long CHANNEL_USE_PERIOD = 1500L;
 	public static Long START_TIME;
 	public static long PP_WAIT_UNIT_TIME = 150L;
@@ -28,13 +28,13 @@ public class CSMADemo {
 	public static void main(String[] args) {
 		CSMADemo obj = new CSMADemo();
 		// obj.csmaPPTesterLoop();
-		obj.csmaPPTester();
+		// obj.csmaPPTester();
 		// obj.csma1PTesterLoop();
 		obj.csma1PTester();
 		// obj.csmaNonPTesterLoop();
-		obj.csmaNonPTester();
+		// obj.csmaNonPTester();
 		LogUtil.printLog("*** main END ***");
-		System.exit(0);
+		// System.exit(0);
 	}
 
 	private void csmaPPTesterLoop() {

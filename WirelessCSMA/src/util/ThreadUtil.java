@@ -17,7 +17,11 @@ public class ThreadUtil {
 	public static List<Thread> threadStart(int iCount, Runnable iRunnable, long iStartInterval) {
 		List<Thread> theThreads = new ArrayList<Thread>();
 		for (int i = 0; i < iCount; i++) {
-			String name = "Client-" + (char) ('A' + i);
+			// Threads can have Alpha-char names of 2 letter combination upto 26*26=676 Threads
+			char c1 = (char) ((i / 26) + 'A');
+			char c2 = (char) ((i % 26) + 'A');
+			// names will be like Client-AA, Client-AB, Client-AZ, Client-BA, Client-ZZ
+			String name = "Client-" + c1 + c2;
 			Thread thread = new Thread(iRunnable, name);
 			THREAD_NAME_ID_MAP.put(name, i + 1);
 			List<XYSeries> list = new ArrayList<XYSeries>();
