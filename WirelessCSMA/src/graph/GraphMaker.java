@@ -156,6 +156,7 @@ public class GraphMaker extends ApplicationFrame {
 		RefineryUtilities.centerFrameOnScreen(this);
 		setVisible(true);
 		saveChartAsPNG(chartClone);
+
 	}
 
 	private void saveChartAsPNG(JFreeChart iJFreechart) {
