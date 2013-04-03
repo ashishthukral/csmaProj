@@ -10,6 +10,8 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.JFrame;
+
 import org.apache.commons.io.IOUtils;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -26,14 +28,17 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.util.ShapeUtilities;
 
 import util.ThreadUtil;
 import exec.CSMADemo;
 
-public class GraphMaker extends ApplicationFrame {
+/*
+ * changed from ApplicationFrame as closing graphs used to terminate application. But Now have to use
+ * System.exit(0); at main end to terminate application
+ */
+public class GraphMaker extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private String _type;
@@ -116,6 +121,12 @@ public class GraphMaker extends ApplicationFrame {
 		plot.setFixedLegendItems(legendItemsNew);
 
 		JFreeChart chart = new JFreeChart(iTitle, plot);
+		/*
+		 * chartClone used for writeScaledChartAsPNG purpose to avoid a bug duplicating Legend info and sometimes throwing below exception
+		 * 
+		 * Exception in thread "AWT-EventQueue-0" java.lang.ArrayIndexOutOfBoundsException: 3 at org.jfree.chart.block.FlowArrangement.arrangeNN(FlowArrangement.java:365)
+		 */
+		JFreeChart chartClone = new JFreeChart(iTitle, plot);
 		LegendItemSource source = new LegendItemSource() {
 
 			public LegendItemCollection getLegendItems() {
@@ -136,6 +147,7 @@ public class GraphMaker extends ApplicationFrame {
 		};
 
 		chart.addLegend(new LegendTitle(source));
+		chartClone.addLegend(new LegendTitle(source));
 		ChartPanel chartPanel = new ChartPanel(chart);
 		// List<Title> subTitles = new ArrayList<Title>();
 		// subTitles.add(new TextTitle("SubTitle 1"));
@@ -146,7 +158,7 @@ public class GraphMaker extends ApplicationFrame {
 		pack();
 		RefineryUtilities.centerFrameOnScreen(this);
 		setVisible(true);
-		saveChartAsPNG(chart);
+		saveChartAsPNG(chartClone);
 	}
 
 	private void saveChartAsPNG(JFreeChart iJFreechart) {
