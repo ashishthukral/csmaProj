@@ -12,6 +12,7 @@ import threadtype.CSMAThreadP;
 import util.LogUtil;
 import util.ThreadUtil;
 
+@SuppressWarnings("unused")
 public class CSMADemo {
 	public static final String X_AXIS_GRAPH_TITLE = "Time (sec)";
 	public static final String Y_AXIS_GRAPH_TITLE = "Client Number";
