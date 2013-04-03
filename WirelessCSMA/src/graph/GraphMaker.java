@@ -163,7 +163,13 @@ public class GraphMaker extends ApplicationFrame {
 		// basically multiplies width n height by scaleFactor int value, and provides high resolution pics
 		int scaleFactor = 3;
 		String imageType = "png";
-		String name = System.getProperty("user.home") + "/" + (_type + CSMADemo.THREAD_COUNT) + "." + imageType;
+		String name = System.getProperty("user.home");
+		if (name.charAt(1) == ':') {
+			// windows path like C:\path\
+			name += "\\" + (_type + CSMADemo.THREAD_COUNT) + "." + imageType;
+		} else {
+			name += "/" + (_type + CSMADemo.THREAD_COUNT) + "." + imageType;
+		}
 		FileOutputStream fos = null;
 		File file = null;
 		try {
