@@ -3,14 +3,13 @@ package graph;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
-
-import javax.swing.JFrame;
 
 import org.apache.commons.io.IOUtils;
 import org.jfree.chart.ChartPanel;
@@ -28,23 +27,21 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.util.ShapeUtilities;
 
 import util.ThreadUtil;
 import exec.CSMADemo;
 
-/*
- * changed from ApplicationFrame as closing graphs used to terminate application. But Now have to use
- * System.exit(0); at main end to terminate application
- */
-public class GraphMaker extends JFrame {
+public class GraphMaker extends ApplicationFrame {
 
 	private static final long serialVersionUID = 1L;
 	private String _type;
 
 	public GraphMaker(String iTitle, String iXTitle, String iYTitle, Collection<List<XYSeries>> iCollection, double iUpperXRange) {
 		super(iTitle);
+
 		if (iTitle.startsWith("1-P")) {
 			_type = "1p";
 		} else if (iTitle.startsWith("P-P")) {
@@ -179,6 +176,16 @@ public class GraphMaker extends JFrame {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(fos);
+		}
+	}
+
+	/*
+	 * closing graphs used to terminate application. But Now fixed. if graph close before app processing finishes, then only graph closes, app runs n terminates normally. if app
+	 * processing finishes, then app terminates on graph close.
+	 */
+	public void windowClosing(final WindowEvent evt) {
+		if (evt.getWindow() == this) {
+			dispose();
 		}
 	}
 }
