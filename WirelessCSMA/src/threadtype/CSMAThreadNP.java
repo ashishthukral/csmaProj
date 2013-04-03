@@ -10,7 +10,6 @@ import exec.CSMADemo;
  */
 public class CSMAThreadNP implements Runnable {
 
-	private static final int MAX_RANDOM_WAIT = 3000;
 	private Boolean isBusy = false;
 
 	@Override
@@ -21,7 +20,7 @@ public class CSMAThreadNP implements Runnable {
 			if (isGoingToWait) {
 				try {
 					// waits random time max MAX_RANDOM_WAIT ms
-					long time = (long) (random.nextFloat() * MAX_RANDOM_WAIT);
+					long time = (long) (random.nextFloat() * CSMADemo.NP_MAX_RANDOM_WAIT);
 					LogUtil.printLogXYWait("Channel busy, Going to wait for random time(ms)=" + time);
 					Thread.sleep(time);
 					isGoingToWait = false;

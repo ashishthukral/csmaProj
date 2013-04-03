@@ -31,9 +31,8 @@ public class CSMAThreadP implements Runnable {
 						e.printStackTrace();
 					}
 				}
-			} else {
-				LogUtil.printLogXYWait("Client waiting for channel to get free");
 			}
+			LogUtil.printLogXYWait("Client waiting for channel to get free");
 			synchronized (this) {
 				LogUtil.printLogXYWait("Channel free, Going to take control");
 				if (!_is1P) {

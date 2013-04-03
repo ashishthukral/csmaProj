@@ -21,26 +21,32 @@ public class CSMADemo {
 	public static long CHANNEL_USE_PERIOD = 1500L;
 	public static Long START_TIME;
 	public static long PP_WAIT_UNIT_TIME = 150L;
-	public static final Float PP_PROB = 0.39F;
-
-	// static {
-	// int randomLimit = 100 / THREAD_COUNT;
-	// Random random = new Random();
-	// // 0 to randomLimit-1
-	// // np<1
-	// // PROB = (float) random.nextInt(randomLimit) / 100;
-	// // PROB = 0.19F;
-	// // PROB_P = 0.39F;
-	//
-	// // PROB = 1.00F;
-	// }
+	public static Float PP_PROB = 0.27F;
+	public static int NP_MAX_RANDOM_WAIT = 2000;
 
 	public static void main(String[] args) {
 		CSMADemo obj = new CSMADemo();
-		// obj.csmaPPTester();
-		// obj.csma1PTester();
+		// obj.csmaPPTesterLoop();
+		obj.csmaPPTester();
+		// obj.csma1PTesterLoop();
+		obj.csma1PTester();
+		// obj.csmaNonPTesterLoop();
 		obj.csmaNonPTester();
 		LogUtil.printLog("*** main END ***");
+	}
+
+	private void csmaPPTesterLoop() {
+		THREAD_START_INTERVAL = 500L;
+		THREAD_COUNT = 10;
+		CHANNEL_USE_PERIOD = 1500L;
+		PP_WAIT_UNIT_TIME = 150L;
+		PP_PROB = 0.2F;
+		float throughput = 0.0f;
+		for (int i = 0; i < 5; i++) {
+			throughput += csmaPPTester();
+			PP_PROB = (float) (PP_PROB + 0.20);
+		}
+		System.out.println("throughput=" + throughput / 5);
 	}
 
 	/*
@@ -52,13 +58,25 @@ public class CSMADemo {
 	 * 
 	 * 3. If transmission is delayed by one time unit, continue with Step 1
 	 */
-	private void csmaPPTester() {
+	private float csmaPPTester() {
 		System.out.println("\n");
 		START_TIME = System.currentTimeMillis();
 		String graphTitle = "P-Persistent Channel Use Graph";
 		LogUtil.printLog("*** csmaPPTester ***");
-		commonHelper(graphTitle, new CSMAThreadP(false));
+		float throughput = commonHelper(graphTitle, new CSMAThreadP(false));
 		LogUtil.printLog("*** csmaPPTester END ***");
+		return throughput;
+	}
+
+	private void csma1PTesterLoop() {
+		THREAD_START_INTERVAL = 500L;
+		THREAD_COUNT = 10;
+		CHANNEL_USE_PERIOD = 1500L;
+		float throughput = 0.0f;
+		for (int i = 0; i < 5; i++) {
+			throughput += csma1PTester();
+		}
+		System.out.println("throughput=" + throughput / 5);
 	}
 
 	/*
@@ -66,13 +84,28 @@ public class CSMADemo {
 	 * 
 	 * 2. If the medium is busy, continue to listen until medium becomes idle, and then transmit immediately
 	 */
-	private void csma1PTester() {
+	private float csma1PTester() {
 		System.out.println("\n");
 		START_TIME = System.currentTimeMillis();
 		String graphTitle = "1-Persistent Channel Use Graph";
 		LogUtil.printLog("*** csma1PTester ***");
-		commonHelper(graphTitle, new CSMAThreadP(true));
+		float throughput = commonHelper(graphTitle, new CSMAThreadP(true));
 		LogUtil.printLog("*** csma1PTester END ***");
+		return throughput;
+	}
+
+	private void csmaNonPTesterLoop() {
+		THREAD_START_INTERVAL = 500L;
+		THREAD_COUNT = 10;
+		CHANNEL_USE_PERIOD = 1500L;
+		NP_MAX_RANDOM_WAIT = 500;
+		float throughput = 0.0f;
+		for (int i = 0; i < 5; i++) {
+			throughput += csmaNonPTester();
+			NP_MAX_RANDOM_WAIT += 500;
+		}
+		System.out.println("throughput=" + throughput / 5);
+
 	}
 
 	/*
@@ -80,16 +113,17 @@ public class CSMADemo {
 	 * 
 	 * 2. If the medium is busy, wait a random amount of time and repeat Step 1
 	 */
-	private void csmaNonPTester() {
+	private float csmaNonPTester() {
 		System.out.println("\n");
 		START_TIME = System.currentTimeMillis();
 		String graphTitle = "Non-Persistent Channel Use Graph";
 		LogUtil.printLog("*** csmaNonPTester ***");
-		commonHelper(graphTitle, new CSMAThreadNP());
+		float throughput = commonHelper(graphTitle, new CSMAThreadNP());
 		LogUtil.printLog("*** csmaNonPTester END ***");
+		return throughput;
 	}
 
-	private void commonHelper(String iGraphTitle, Runnable iRunnable) {
+	private float commonHelper(String iGraphTitle, Runnable iRunnable) {
 		List<Thread> theThreads = ThreadUtil.threadStart(THREAD_COUNT, iRunnable, THREAD_START_INTERVAL);
 		for (Thread aThread : theThreads) {
 			try {
@@ -99,10 +133,12 @@ public class CSMADemo {
 			}
 		}
 		float timeTaken = (float) (System.currentTimeMillis() - START_TIME) / 1000;
-		LogUtil.printLog("Throughput for " + THREAD_COUNT + " clients = " + timeTaken / THREAD_COUNT + " (client/sec)");
+		float throughput = timeTaken / THREAD_COUNT;
+		System.out.println("Throughput for " + THREAD_COUNT + " clients = " + throughput + " (sec/client)");
 		timeTaken += 5;
 		new GraphMaker(iGraphTitle, X_AXIS_GRAPH_TITLE, Y_AXIS_GRAPH_TITLE, ThreadUtil.THREAD_NAME_XY_MAP.values(), timeTaken);
 		cleanUp();
+		return throughput;
 	}
 
 	private void cleanUp() {
