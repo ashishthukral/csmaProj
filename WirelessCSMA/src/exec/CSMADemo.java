@@ -98,7 +98,8 @@ public class CSMADemo {
 				e.printStackTrace();
 			}
 		}
-		int timeTaken = (int) (System.currentTimeMillis() - START_TIME) / 1000;
+		float timeTaken = (float) (System.currentTimeMillis() - START_TIME) / 1000;
+		LogUtil.printLog("Throughput for " + THREAD_COUNT + " clients = " + timeTaken / THREAD_COUNT + " (client/sec)");
 		timeTaken += 5;
 		new GraphMaker(iGraphTitle, X_AXIS_GRAPH_TITLE, Y_AXIS_GRAPH_TITLE, ThreadUtil.THREAD_NAME_XY_MAP.values(), timeTaken);
 		cleanUp();
