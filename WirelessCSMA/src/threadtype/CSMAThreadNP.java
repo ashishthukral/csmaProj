@@ -3,13 +3,14 @@ package threadtype;
 import java.util.Random;
 
 import util.LogUtil;
-import exec.CSMAP;
+import exec.CSMADemo;
 
 /*
  * Used for CSMA-Non Persistent demo
  */
 public class CSMAThreadNP implements Runnable {
 
+	private static final int MAX_RANDOM_WAIT = 3000;
 	private Boolean isBusy = false;
 
 	@Override
@@ -19,8 +20,8 @@ public class CSMAThreadNP implements Runnable {
 		while (true) {
 			if (isGoingToWait) {
 				try {
-					// waits random time max 3 secs
-					long time = (long) (random.nextFloat() * 3000);
+					// waits random time max MAX_RANDOM_WAIT ms
+					long time = (long) (random.nextFloat() * MAX_RANDOM_WAIT);
 					LogUtil.printLogXYWait("Channel busy, Going to wait for random time(ms)=" + time);
 					Thread.sleep(time);
 					isGoingToWait = false;
@@ -28,7 +29,7 @@ public class CSMAThreadNP implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			LogUtil.printLog("Checking for channel");
+			LogUtil.printLog("Checking if channel busy or not");
 			synchronized (isBusy) {
 				if (isBusy) {
 					isGoingToWait = true;
@@ -40,14 +41,14 @@ public class CSMAThreadNP implements Runnable {
 			synchronized (this) {
 				LogUtil.printLogXYRun("Started using channel");
 				try {
-					Thread.sleep(CSMAP.CHANNEL_USE_PERIOD);
+					Thread.sleep(CSMADemo.CHANNEL_USE_PERIOD);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				LogUtil.printLogXYRun("Releasing channel");
 				synchronized (isBusy) {
 					isBusy = false;
 				}
-				LogUtil.printLogXYRun("Releasing channel");
 			}
 			break;
 		}

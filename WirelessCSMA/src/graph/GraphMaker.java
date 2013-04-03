@@ -23,6 +23,8 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.util.ShapeUtilities;
 
+import util.ThreadUtil;
+
 public class GraphMaker extends ApplicationFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -86,12 +88,12 @@ public class GraphMaker extends ApplicationFrame {
 		// reverse order of bottom legend to put it in ascending order
 		LegendItemCollection legendItemsOld = plot.getLegendItems();
 		final LegendItemCollection legendItemsNew = new LegendItemCollection();
-		System.out.println(legendItemsOld.getItemCount());
+		// System.out.println(legendItemsOld.getItemCount());
 
 		for (i = 0; i < legendItemsOld.getItemCount(); i++) {
 			LegendItem aLegendItem = legendItemsOld.get(i);
 			// System.out.println(aLegendItem.getSeriesKey() + "," + aLegendItem.getSeriesIndex());
-			if (aLegendItem.getSeriesKey().equals("Wait") || aLegendItem.getSeriesKey().equals("Run"))
+			if (aLegendItem.getSeriesKey().equals(ThreadUtil.THREAD_WAIT_TITLE) || aLegendItem.getSeriesKey().equals(ThreadUtil.THREAD_RUN_TITLE))
 				legendItemsNew.add(aLegendItem);
 		}
 

@@ -9,6 +9,8 @@ import org.jfree.data.xy.XYSeries;
 
 public class ThreadUtil {
 
+	public static final String THREAD_WAIT_TITLE = "Wait";
+	public static final String THREAD_RUN_TITLE = "Run";
 	public static Map<String, Integer> THREAD_NAME_ID_MAP = new HashMap<String, Integer>();
 	public static Map<String, List<XYSeries>> THREAD_NAME_XY_MAP = new HashMap<String, List<XYSeries>>();
 
@@ -20,8 +22,8 @@ public class ThreadUtil {
 			THREAD_NAME_ID_MAP.put(name, i + 1);
 			List<XYSeries> list = new ArrayList<XYSeries>();
 			// seriesKey hack to change the legend item text
-			list.add(new XYSeries("Run" + (i == 0 ? "" : i)));
-			list.add(new XYSeries("Wait" + (i == 0 ? "" : i)));
+			list.add(new XYSeries(THREAD_RUN_TITLE + (i == 0 ? "" : i)));
+			list.add(new XYSeries(THREAD_WAIT_TITLE + (i == 0 ? "" : i)));
 			THREAD_NAME_XY_MAP.put(name, list);
 			theThreads.add(thread);
 		}
@@ -37,8 +39,17 @@ public class ThreadUtil {
 	}
 
 	public static int getThreadCustomId() {
-		return THREAD_NAME_ID_MAP.get(Thread.currentThread().getName());
+		Integer id = THREAD_NAME_ID_MAP.get(Thread.currentThread().getName());
+		if (id == null)
+			id = 666;
+		return id;
 	}
+
+	// private static int safeGetThreadCustomId() {
+	// String name = Thread.currentThread().getName();
+	// int id = name.charAt(name.length() - 1) - 'A' + 1;
+	// return id;
+	// }
 
 	public static void addTimeRunGraph(Number iX) {
 		THREAD_NAME_XY_MAP.get(Thread.currentThread().getName()).get(0).add(iX, getThreadCustomId());

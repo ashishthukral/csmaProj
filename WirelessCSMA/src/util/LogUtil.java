@@ -1,12 +1,12 @@
 package util;
 
-import exec.CSMAP;
+import exec.CSMADemo;
 
 public class LogUtil {
 
 	public static float printLog(String iMessage) {
-		float timeTaken = (float) (System.currentTimeMillis() - CSMAP.START_TIME) / 1000;
-		String theMessage = timeTaken + " sec - " + Thread.currentThread().getName() + " - " + iMessage;
+		float timeTaken = (float) (System.currentTimeMillis() - CSMADemo.START_TIME) / 1000;
+		String theMessage = timeTaken + " sec - " + Thread.currentThread().getName() + "-" + ThreadUtil.getThreadCustomId() + " - " + iMessage;
 		System.out.println(theMessage);
 		return timeTaken;
 	}
