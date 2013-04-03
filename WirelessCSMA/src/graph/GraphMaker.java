@@ -149,7 +149,7 @@ public class GraphMaker extends ApplicationFrame {
 		// List<Title> subTitles = new ArrayList<Title>();
 		// subTitles.add(new TextTitle("SubTitle 1"));
 		// subTitles.add(new TextTitle("SubTitle 2"));
-		// chart.setSubtitles(subTitles);
+		// chart.setSubtitles(subTitles );
 		chartPanel.setPreferredSize(new Dimension(1800, 900));
 		setContentPane(chartPanel);
 		pack();
