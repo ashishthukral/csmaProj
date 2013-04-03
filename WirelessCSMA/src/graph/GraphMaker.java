@@ -189,6 +189,7 @@ public class GraphMaker extends ApplicationFrame {
 	 * closing graphs used to terminate application. But Now fixed. if graph close before app processing finishes, then only graph closes, app runs n terminates normally. if app
 	 * processing finishes, then app terminates on graph close.
 	 */
+	@Override
 	public void windowClosing(final WindowEvent evt) {
 		if (evt.getWindow() == this) {
 			dispose();

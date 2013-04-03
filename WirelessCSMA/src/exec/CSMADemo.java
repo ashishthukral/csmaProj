@@ -34,7 +34,6 @@ public class CSMADemo {
 		// obj.csmaNonPTesterLoop();
 		// obj.csmaNonPTester();
 		LogUtil.printLog("*** main END ***");
-		// System.exit(0);
 	}
 
 	private void csmaPPTesterLoop() {
