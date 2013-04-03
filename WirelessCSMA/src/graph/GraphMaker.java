@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYItemLabelGenerator;
@@ -57,6 +58,8 @@ public class GraphMaker extends ApplicationFrame {
 			renderer.setSeriesShape(i, ShapeUtilities.createDiamond(4));
 			renderer.setSeriesStroke(i, new BasicStroke(2));
 			renderer.setSeriesPaint(i, Color.GREEN);
+			// if (i > 0)
+			// renderer.setSeriesVisibleInLegend(i, false);
 			i++;
 		}
 		i = 0;
@@ -66,7 +69,8 @@ public class GraphMaker extends ApplicationFrame {
 			renderer1.setSeriesLinesVisible(i, true);
 			// shows points for every read on the line
 			renderer1.setSeriesShapesVisible(i, true);
-			renderer1.setSeriesVisibleInLegend(i, false);
+			// if (i > 0)
+			// renderer1.setSeriesVisibleInLegend(i, false);
 			renderer1.setSeriesStroke(i, new BasicStroke(2));
 			renderer1.setSeriesPaint(i, Color.RED);
 			renderer1.setSeriesShape(i, ShapeUtilities.createDiamond(4));
@@ -82,9 +86,15 @@ public class GraphMaker extends ApplicationFrame {
 		// reverse order of bottom legend to put it in ascending order
 		LegendItemCollection legendItemsOld = plot.getLegendItems();
 		final LegendItemCollection legendItemsNew = new LegendItemCollection();
+		System.out.println(legendItemsOld.getItemCount());
+
 		for (i = 0; i < legendItemsOld.getItemCount(); i++) {
-			legendItemsNew.add(legendItemsOld.get(legendItemsOld.getItemCount() - i - 1));
+			LegendItem aLegendItem = legendItemsOld.get(i);
+			// System.out.println(aLegendItem.getSeriesKey() + "," + aLegendItem.getSeriesIndex());
+			if (aLegendItem.getSeriesKey().equals("Wait") || aLegendItem.getSeriesKey().equals("Run"))
+				legendItemsNew.add(aLegendItem);
 		}
+
 		plot.setFixedLegendItems(legendItemsNew);
 
 		JFreeChart chart = new JFreeChart(iTitle, plot);

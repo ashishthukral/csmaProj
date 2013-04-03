@@ -15,12 +15,13 @@ public class ThreadUtil {
 	public static List<Thread> threadStart(int iCount, Runnable iRunnable, long iStartInterval) {
 		List<Thread> theThreads = new ArrayList<Thread>();
 		for (int i = 0; i < iCount; i++) {
-			String name = "Thread-" + (char) ('A' + i);
+			String name = "Client-" + (char) ('A' + i);
 			Thread thread = new Thread(iRunnable, name);
 			THREAD_NAME_ID_MAP.put(name, i + 1);
 			List<XYSeries> list = new ArrayList<XYSeries>();
-			list.add(new XYSeries(name));
-			list.add(new XYSeries(name + "wait"));
+			// seriesKey hack to change the legend item text
+			list.add(new XYSeries("Run" + (i == 0 ? "" : i)));
+			list.add(new XYSeries("Wait" + (i == 0 ? "" : i)));
 			THREAD_NAME_XY_MAP.put(name, list);
 			theThreads.add(thread);
 		}

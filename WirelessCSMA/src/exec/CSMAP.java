@@ -11,10 +11,10 @@ import util.ThreadUtil;
 
 public class CSMAP {
 
-	private static final long THREAD_START_INTERVAL = 100L;
-	public static final int THREAD_COUNT = 3;
-	public static final long CHANNEL_USE_PERIOD = 3000;
-	public static final long CHANNEL_WAIT_UNIT_TIME = 1000;
+	private static final long THREAD_START_INTERVAL = 500L;
+	public static final int THREAD_COUNT = 10;
+	public static final long CHANNEL_USE_PERIOD = 1500;
+	public static final long CHANNEL_WAIT_UNIT_TIME = 150;
 
 	public static final Float PROB_P = 0.39F;
 	public static final Float PROB_1 = 1.00F;
