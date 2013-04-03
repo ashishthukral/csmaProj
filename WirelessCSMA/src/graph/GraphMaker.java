@@ -93,7 +93,7 @@ public class GraphMaker extends ApplicationFrame {
 		for (i = 0; i < legendItemsOld.getItemCount(); i++) {
 			LegendItem aLegendItem = legendItemsOld.get(i);
 			// System.out.println(aLegendItem.getSeriesKey() + "," + aLegendItem.getSeriesIndex());
-			if (aLegendItem.getSeriesKey().equals(ThreadUtil.THREAD_WAIT_TITLE) || aLegendItem.getSeriesKey().equals(ThreadUtil.THREAD_RUN_TITLE))
+			if (aLegendItem.getSeriesKey().equals(ThreadUtil.THREAD_WAIT_GRAPH_TITLE) || aLegendItem.getSeriesKey().equals(ThreadUtil.THREAD_RUN_GRAPH_TITLE))
 				legendItemsNew.add(aLegendItem);
 		}
 

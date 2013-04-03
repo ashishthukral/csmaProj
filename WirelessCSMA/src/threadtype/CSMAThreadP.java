@@ -10,25 +10,22 @@ import exec.CSMADemo;
  */
 public class CSMAThreadP implements Runnable {
 
-	private float _prob;
 	private boolean _is1P;
 
-	public CSMAThreadP(float iProb, boolean iIs1P) {
-		_prob = iProb;
+	public CSMAThreadP(boolean iIs1P) {
 		_is1P = iIs1P;
 	}
 
 	@Override
 	public void run() {
-		int theStaticProb = (int) (_prob * 100);
 		Random random = new Random();
 		boolean isGoingToWait = false;
 		while (true) {
 			if (!_is1P) {
 				if (isGoingToWait) {
 					try {
-						LogUtil.printLogXYWait("Client decided not to transmit, wait for fixed time (ms)=" + CSMADemo.CHANNEL_WAIT_UNIT_TIME);
-						Thread.sleep(CSMADemo.CHANNEL_WAIT_UNIT_TIME);
+						LogUtil.printLogXYWait("Client decided not to transmit, wait for fixed time (ms)=" + CSMADemo.PP_WAIT_UNIT_TIME);
+						Thread.sleep(CSMADemo.PP_WAIT_UNIT_TIME);
 						isGoingToWait = false;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -40,6 +37,7 @@ public class CSMAThreadP implements Runnable {
 			synchronized (this) {
 				LogUtil.printLogXYWait("Channel free, Going to take control");
 				if (!_is1P) {
+					int theStaticProb = (int) (CSMADemo.PP_PROB * 100);
 					// generates 0 to 99
 					int theDynamicProb = random.nextInt(100);
 					LogUtil.printLog(Thread.currentThread().getName() + " theStaticProb=" + theStaticProb + ",,, theDynamicProb=" + theDynamicProb);

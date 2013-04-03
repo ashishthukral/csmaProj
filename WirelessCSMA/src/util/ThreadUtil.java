@@ -9,8 +9,8 @@ import org.jfree.data.xy.XYSeries;
 
 public class ThreadUtil {
 
-	public static final String THREAD_WAIT_TITLE = "Wait";
-	public static final String THREAD_RUN_TITLE = "Run";
+	public static final String THREAD_WAIT_GRAPH_TITLE = "Wait";
+	public static final String THREAD_RUN_GRAPH_TITLE = "Run";
 	public static Map<String, Integer> THREAD_NAME_ID_MAP = new HashMap<String, Integer>();
 	public static Map<String, List<XYSeries>> THREAD_NAME_XY_MAP = new HashMap<String, List<XYSeries>>();
 
@@ -22,8 +22,8 @@ public class ThreadUtil {
 			THREAD_NAME_ID_MAP.put(name, i + 1);
 			List<XYSeries> list = new ArrayList<XYSeries>();
 			// seriesKey hack to change the legend item text
-			list.add(new XYSeries(THREAD_RUN_TITLE + (i == 0 ? "" : i)));
-			list.add(new XYSeries(THREAD_WAIT_TITLE + (i == 0 ? "" : i)));
+			list.add(new XYSeries(THREAD_RUN_GRAPH_TITLE + (i == 0 ? "" : i)));
+			list.add(new XYSeries(THREAD_WAIT_GRAPH_TITLE + (i == 0 ? "" : i)));
 			THREAD_NAME_XY_MAP.put(name, list);
 			theThreads.add(thread);
 		}

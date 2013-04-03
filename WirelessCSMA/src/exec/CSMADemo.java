@@ -13,15 +13,15 @@ import util.LogUtil;
 import util.ThreadUtil;
 
 public class CSMADemo {
+	public static final String X_AXIS_GRAPH_TITLE = "Time (sec)";
+	public static final String Y_AXIS_GRAPH_TITLE = "Client Number";
 
-	private static long THREAD_START_INTERVAL;
-	public static int THREAD_COUNT;
-	public static long CHANNEL_USE_PERIOD;
-	public static long CHANNEL_WAIT_UNIT_TIME;
-
-	public static final Float PROB_P = 0.39F;
-	public static final Float PROB_1 = 1.00F;
+	public static long THREAD_START_INTERVAL = 500L;
+	public static int THREAD_COUNT = 10;
+	public static long CHANNEL_USE_PERIOD = 1500L;
 	public static Long START_TIME;
+	public static long PP_WAIT_UNIT_TIME = 150L;
+	public static final Float PP_PROB = 0.39F;
 
 	// static {
 	// int randomLimit = 100 / THREAD_COUNT;
@@ -37,15 +37,10 @@ public class CSMADemo {
 
 	public static void main(String[] args) {
 		CSMADemo obj = new CSMADemo();
-		// obj.testPP();
+		obj.csmaPPTester();
 		obj.csma1PTester();
-		// obj.csmaNPTester();
+		obj.csmaNPTester();
 		LogUtil.printLog("*** main END ***");
-	}
-
-	private void cleanUp() {
-		ThreadUtil.THREAD_NAME_ID_MAP = new HashMap<String, Integer>();
-		ThreadUtil.THREAD_NAME_XY_MAP = new HashMap<String, List<XYSeries>>();
 	}
 
 	/*
@@ -57,26 +52,13 @@ public class CSMADemo {
 	 * 
 	 * 3. If transmission is delayed by one time unit, continue with Step 1
 	 */
-	private void testPP() {
-		System.out.println("*** testPP ***");
-		long start = System.currentTimeMillis();
-		CSMAThreadP threadP = new CSMAThreadP(PROB_P, false);
-		List<Thread> theThreads = ThreadUtil.threadStart(THREAD_COUNT, threadP, THREAD_START_INTERVAL);
-		OUTER: while (true) {
-			try {
-				Thread.sleep(CHANNEL_USE_PERIOD);
-				System.out.println("testPP Checking if all threads dead or not");
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			for (Thread aThread : theThreads) {
-				if (aThread.isAlive())
-					continue OUTER;
-			}
-			break;
-		}
-		long end = System.currentTimeMillis();
-		System.out.println("total time (secs)=" + (float) (end - start) / 1000);
+	private void csmaPPTester() {
+		System.out.println("\n");
+		START_TIME = System.currentTimeMillis();
+		String graphTitle = "P-Persistent Channel Use Graph";
+		LogUtil.printLog("*** csmaPPTester ***");
+		commonHelper(graphTitle, new CSMAThreadP(false));
+		LogUtil.printLog("*** csmaPPTester END ***");
 	}
 
 	/*
@@ -85,29 +67,12 @@ public class CSMADemo {
 	 * 2. If the medium is busy, continue to listen until medium becomes idle, and then transmit immediately
 	 */
 	private void csma1PTester() {
-		THREAD_START_INTERVAL = 500L;
-		THREAD_COUNT = 10;
-		CHANNEL_USE_PERIOD = 1500L;
-		CHANNEL_WAIT_UNIT_TIME = 150L;
-		String graphTitle = "1-Persistent Channel Use Graph";
-		String xAxisTitle = "Time (sec)";
-		String yAxisTitle = "Client Number";
+		System.out.println("\n");
 		START_TIME = System.currentTimeMillis();
+		String graphTitle = "1-Persistent Channel Use Graph";
 		LogUtil.printLog("*** csma1PTester ***");
-		CSMAThreadP thread1P = new CSMAThreadP(PROB_1, true);
-		List<Thread> theThreads = ThreadUtil.threadStart(THREAD_COUNT, thread1P, THREAD_START_INTERVAL);
-		for (Thread aThread : theThreads) {
-			try {
-				aThread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		commonHelper(graphTitle, new CSMAThreadP(true));
 		LogUtil.printLog("*** csma1PTester END ***");
-		int timeTaken = (int) (System.currentTimeMillis() - START_TIME) / 1000;
-		timeTaken += 5;
-		new GraphMaker(graphTitle, xAxisTitle, yAxisTitle, ThreadUtil.THREAD_NAME_XY_MAP.values(), timeTaken);
-		cleanUp();
 	}
 
 	/*
@@ -116,17 +81,16 @@ public class CSMADemo {
 	 * 2. If the medium is busy, wait a random amount of time and repeat Step 1
 	 */
 	private void csmaNPTester() {
-		THREAD_START_INTERVAL = 500L;
-		THREAD_COUNT = 10;
-		CHANNEL_USE_PERIOD = 1500L;
-		CHANNEL_WAIT_UNIT_TIME = 150L;
-		String graphTitle = "N-Persistent Channel Use Graph";
-		String xAxisTitle = "Time (sec)";
-		String yAxisTitle = "Client Number";
+		System.out.println("\n");
 		START_TIME = System.currentTimeMillis();
+		String graphTitle = "N-Persistent Channel Use Graph";
 		LogUtil.printLog("*** csmaNPTester ***");
-		CSMAThreadNP threadNP = new CSMAThreadNP();
-		List<Thread> theThreads = ThreadUtil.threadStart(THREAD_COUNT, threadNP, THREAD_START_INTERVAL);
+		commonHelper(graphTitle, new CSMAThreadNP());
+		LogUtil.printLog("*** csmaNPTester END ***");
+	}
+
+	private void commonHelper(String iGraphTitle, Runnable iRunnable) {
+		List<Thread> theThreads = ThreadUtil.threadStart(THREAD_COUNT, iRunnable, THREAD_START_INTERVAL);
 		for (Thread aThread : theThreads) {
 			try {
 				aThread.join();
@@ -134,11 +98,15 @@ public class CSMADemo {
 				e.printStackTrace();
 			}
 		}
-		LogUtil.printLog("*** csmaNPTester END ***");
 		int timeTaken = (int) (System.currentTimeMillis() - START_TIME) / 1000;
 		timeTaken += 5;
-		new GraphMaker(graphTitle, xAxisTitle, yAxisTitle, ThreadUtil.THREAD_NAME_XY_MAP.values(), timeTaken);
+		new GraphMaker(iGraphTitle, X_AXIS_GRAPH_TITLE, Y_AXIS_GRAPH_TITLE, ThreadUtil.THREAD_NAME_XY_MAP.values(), timeTaken);
 		cleanUp();
+	}
+
+	private void cleanUp() {
+		ThreadUtil.THREAD_NAME_ID_MAP = new HashMap<String, Integer>();
+		ThreadUtil.THREAD_NAME_XY_MAP = new HashMap<String, List<XYSeries>>();
 	}
 
 }
