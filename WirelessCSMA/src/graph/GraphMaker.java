@@ -3,20 +3,27 @@ package graph;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
@@ -24,13 +31,22 @@ import org.jfree.ui.RefineryUtilities;
 import org.jfree.util.ShapeUtilities;
 
 import util.ThreadUtil;
+import exec.CSMADemo;
 
 public class GraphMaker extends ApplicationFrame {
 
 	private static final long serialVersionUID = 1L;
+	private String _type;
 
 	public GraphMaker(String iTitle, String iXTitle, String iYTitle, Collection<List<XYSeries>> iCollection, double iUpperXRange) {
 		super(iTitle);
+		if (iTitle.startsWith("1-P")) {
+			_type = "1p";
+		} else if (iTitle.startsWith("P-P")) {
+			_type = "pp";
+		} else {
+			_type = "np";
+		}
 		// X-axis
 		NumberAxis rangeAxis = new NumberAxis(iXTitle);
 		rangeAxis.setRange(-1, iUpperXRange);
@@ -100,21 +116,57 @@ public class GraphMaker extends ApplicationFrame {
 		plot.setFixedLegendItems(legendItemsNew);
 
 		JFreeChart chart = new JFreeChart(iTitle, plot);
-		// LegendItemSource source = new LegendItemSource() {
-		//
-		// public LegendItemCollection getLegendItems() {
-		// LegendItemCollection lic = new LegendItemCollection();
-		// lic.addAll(legendItemsNew);
-		// return lic;
-		// }
-		// };
+		LegendItemSource source = new LegendItemSource() {
 
-		// chart.addLegend(new LegendTitle(source));
+			public LegendItemCollection getLegendItems() {
+				LegendItemCollection lic = new LegendItemCollection();
+				lic.add(new LegendItem("Clients=" + CSMADemo.THREAD_COUNT));
+				lic.add(new LegendItem("Channel Use Time (ms)=" + CSMADemo.CHANNEL_USE_PERIOD));
+				lic.add(new LegendItem("Client Arrival Interval (ms)=" + CSMADemo.THREAD_START_INTERVAL));
+				if (_type.equals("1p")) {
+					//
+				} else if (_type.equals("pp")) {
+					lic.add(new LegendItem("Unit Wait Time (ms)=" + CSMADemo.PP_WAIT_UNIT_TIME));
+					lic.add(new LegendItem("Probability=" + CSMADemo.PP_PROB));
+				} else {
+					lic.add(new LegendItem("Max Random Wait Time (ms)=" + CSMADemo.NP_MAX_RANDOM_WAIT));
+				}
+				return lic;
+			}
+		};
+
+		chart.addLegend(new LegendTitle(source));
 		ChartPanel chartPanel = new ChartPanel(chart);
+		// List<Title> subTitles = new ArrayList<Title>();
+		// subTitles.add(new TextTitle("SubTitle 1"));
+		// subTitles.add(new TextTitle("SubTitle 2"));
+		// chart.setSubtitles(subTitles);
 		chartPanel.setPreferredSize(new Dimension(1800, 900));
 		setContentPane(chartPanel);
 		pack();
 		RefineryUtilities.centerFrameOnScreen(this);
 		setVisible(true);
+		saveChartAsPNG(chart);
+	}
+
+	private void saveChartAsPNG(JFreeChart iJFreechart) {
+		int width = 1920, height = 1080;
+		// basically multiplies width n height by scaleFactor int value, and provides high resolution pics
+		int scaleFactor = 3;
+		String imageType = "png";
+		String name = System.getProperty("user.home") + "/" + (_type + CSMADemo.THREAD_COUNT) + "." + imageType;
+		FileOutputStream fos = null;
+		File file = null;
+		try {
+			fos = new FileOutputStream(name);
+			ChartUtilities.writeScaledChartAsPNG(fos, iJFreechart, width, height, scaleFactor, scaleFactor);
+			file = new File(name);
+			System.out.println(imageType + " image (" + (width * scaleFactor) + "x" + (height * scaleFactor) + ") exported to=" + name + "  ,,,  size(kB)=" + (float) file.length()
+					/ 1024);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(fos);
+		}
 	}
 }
