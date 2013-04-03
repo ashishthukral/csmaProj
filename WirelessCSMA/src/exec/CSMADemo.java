@@ -37,9 +37,9 @@ public class CSMADemo {
 
 	public static void main(String[] args) {
 		CSMADemo obj = new CSMADemo();
-		obj.csmaPPTester();
-		obj.csma1PTester();
-		obj.csmaNPTester();
+		// obj.csmaPPTester();
+		// obj.csma1PTester();
+		obj.csmaNonPTester();
 		LogUtil.printLog("*** main END ***");
 	}
 
@@ -80,13 +80,13 @@ public class CSMADemo {
 	 * 
 	 * 2. If the medium is busy, wait a random amount of time and repeat Step 1
 	 */
-	private void csmaNPTester() {
+	private void csmaNonPTester() {
 		System.out.println("\n");
 		START_TIME = System.currentTimeMillis();
-		String graphTitle = "N-Persistent Channel Use Graph";
-		LogUtil.printLog("*** csmaNPTester ***");
+		String graphTitle = "Non-Persistent Channel Use Graph";
+		LogUtil.printLog("*** csmaNonPTester ***");
 		commonHelper(graphTitle, new CSMAThreadNP());
-		LogUtil.printLog("*** csmaNPTester END ***");
+		LogUtil.printLog("*** csmaNonPTester END ***");
 	}
 
 	private void commonHelper(String iGraphTitle, Runnable iRunnable) {
