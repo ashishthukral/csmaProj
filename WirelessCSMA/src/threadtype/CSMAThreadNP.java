@@ -23,7 +23,7 @@ public class CSMAThreadNP implements Runnable {
 				try {
 					// waits random time max 3 secs
 					long time = (long) (random.nextFloat() * 3000);
-					LogUtil.printLog("going to wait for random time(ms)=" + time);
+					LogUtil.printLogXYWait("going to wait for random time(ms)=" + time);
 					Thread.sleep(time);
 					isGoingToWait = false;
 				} catch (InterruptedException e) {
@@ -38,9 +38,9 @@ public class CSMAThreadNP implements Runnable {
 				}
 				isBusy = true;
 			}
-			LogUtil.printLog("******************");
+			LogUtil.printLogXYWait("Going to take control");
 			synchronized (this) {
-				LogUtil.printLogXY("started using channel");
+				LogUtil.printLogXYRun("started using channel");
 				try {
 					Thread.sleep(CSMAP.CHANNEL_USE_PERIOD);
 				} catch (InterruptedException e) {
@@ -49,7 +49,7 @@ public class CSMAThreadNP implements Runnable {
 				synchronized (isBusy) {
 					isBusy = false;
 				}
-				LogUtil.printLogXY("releasing channel");
+				LogUtil.printLogXYRun("releasing channel");
 			}
 			break;
 		}

@@ -10,15 +10,18 @@ import org.jfree.data.xy.XYSeries;
 public class ThreadUtil {
 
 	public static Map<String, Integer> THREAD_NAME_ID_MAP = new HashMap<String, Integer>();
-	public static Map<String, XYSeries> THREAD_NAME_XY_MAP = new HashMap<String, XYSeries>();
+	public static Map<String, List<XYSeries>> THREAD_NAME_XY_MAP = new HashMap<String, List<XYSeries>>();
 
 	public static List<Thread> threadStart(int iCount, Runnable iRunnable, long iStartInterval) {
 		List<Thread> theThreads = new ArrayList<Thread>();
 		for (int i = 0; i < iCount; i++) {
-			String name = "Thread " + (char) ('A' + i);
+			String name = "Thread-" + (char) ('A' + i);
 			Thread thread = new Thread(iRunnable, name);
 			THREAD_NAME_ID_MAP.put(name, i + 1);
-			THREAD_NAME_XY_MAP.put(name, new XYSeries(name));
+			List<XYSeries> list = new ArrayList<XYSeries>();
+			list.add(new XYSeries(name));
+			list.add(new XYSeries(name + "wait"));
+			THREAD_NAME_XY_MAP.put(name, list);
 			theThreads.add(thread);
 		}
 		for (Thread thread : theThreads) {
@@ -36,8 +39,12 @@ public class ThreadUtil {
 		return THREAD_NAME_ID_MAP.get(Thread.currentThread().getName());
 	}
 
-	public static void addTimeGraph(Number iX) {
-		THREAD_NAME_XY_MAP.get(Thread.currentThread().getName()).add(iX, getThreadCustomId());
+	public static void addTimeRunGraph(Number iX) {
+		THREAD_NAME_XY_MAP.get(Thread.currentThread().getName()).get(0).add(iX, getThreadCustomId());
+	}
+
+	public static void addTimeWaitGraph(Number iX) {
+		THREAD_NAME_XY_MAP.get(Thread.currentThread().getName()).get(1).add(iX, getThreadCustomId());
 	}
 
 }

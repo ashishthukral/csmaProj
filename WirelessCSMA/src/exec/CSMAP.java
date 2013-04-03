@@ -2,10 +2,7 @@ package exec;
 
 import graph.GraphMaker;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import org.jfree.data.xy.XYSeries;
 
 import threadtype.CSMAThreadNP;
 import threadtype.CSMAThreadP;
@@ -110,9 +107,9 @@ public class CSMAP {
 	private void csmaNPTester() {
 		START_TIME = System.currentTimeMillis();
 		LogUtil.printLog("*** csmaNPTester ***");
-		String graphTitle = "Client Channel Use Graph";
+		String graphTitle = "N-Persistent Channel Use Graph";
 		String xAxisTitle = "Time (sec)";
-		String yAxisTitle = "Thread Id";
+		String yAxisTitle = "Client Number";
 		CSMAThreadNP threadNP = new CSMAThreadNP();
 		List<Thread> theThreads = ThreadUtil.threadStart(THREAD_COUNT, threadNP, THREAD_START_INTERVAL);
 		for (Thread aThread : theThreads) {
@@ -126,7 +123,7 @@ public class CSMAP {
 		int timeTaken = (int) (System.currentTimeMillis() - START_TIME) / 1000;
 		timeTaken += 5;
 
-		new GraphMaker(graphTitle, xAxisTitle, yAxisTitle, new ArrayList<XYSeries>(ThreadUtil.THREAD_NAME_XY_MAP.values()), timeTaken);
+		new GraphMaker(graphTitle, xAxisTitle, yAxisTitle, ThreadUtil.THREAD_NAME_XY_MAP.values(), timeTaken);
 	}
 
 }
