@@ -12,8 +12,6 @@ public class CSMAThreadNP implements Runnable {
 
 	private Boolean isBusy = false;
 
-	// init xyseries to plot points on it
-
 	@Override
 	public void run() {
 		boolean isGoingToWait = false;
@@ -23,14 +21,14 @@ public class CSMAThreadNP implements Runnable {
 				try {
 					// waits random time max 3 secs
 					long time = (long) (random.nextFloat() * 3000);
-					LogUtil.printLogXYWait("going to wait for random time(ms)=" + time);
+					LogUtil.printLogXYWait("Channel busy, Going to wait for random time(ms)=" + time);
 					Thread.sleep(time);
 					isGoingToWait = false;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			LogUtil.printLog("checking for channel");
+			LogUtil.printLog("Checking for channel");
 			synchronized (isBusy) {
 				if (isBusy) {
 					isGoingToWait = true;
@@ -38,9 +36,9 @@ public class CSMAThreadNP implements Runnable {
 				}
 				isBusy = true;
 			}
-			LogUtil.printLogXYWait("Going to take control");
+			LogUtil.printLogXYWait("Channel free, Going to take control");
 			synchronized (this) {
-				LogUtil.printLogXYRun("started using channel");
+				LogUtil.printLogXYRun("Started using channel");
 				try {
 					Thread.sleep(CSMAP.CHANNEL_USE_PERIOD);
 				} catch (InterruptedException e) {
@@ -49,7 +47,7 @@ public class CSMAThreadNP implements Runnable {
 				synchronized (isBusy) {
 					isBusy = false;
 				}
-				LogUtil.printLogXYRun("releasing channel");
+				LogUtil.printLogXYRun("Releasing channel");
 			}
 			break;
 		}

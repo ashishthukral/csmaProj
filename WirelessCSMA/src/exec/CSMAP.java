@@ -11,10 +11,10 @@ import util.ThreadUtil;
 
 public class CSMAP {
 
-	private static final long THREAD_START_INTERVAL = 500L;
-	public static final int THREAD_COUNT = 10;
-	public static final long CHANNEL_USE_PERIOD = 1500;
-	public static final long CHANNEL_WAIT_UNIT_TIME = 150;
+	private static long THREAD_START_INTERVAL = 500L;
+	public static int THREAD_COUNT = 10;
+	public static long CHANNEL_USE_PERIOD = 1500;
+	public static long CHANNEL_WAIT_UNIT_TIME = 150;
 
 	public static final Float PROB_P = 0.39F;
 	public static final Float PROB_1 = 1.00F;
@@ -105,6 +105,10 @@ public class CSMAP {
 	 * 2. If the medium is busy, wait a random amount of time and repeat Step 1
 	 */
 	private void csmaNPTester() {
+		THREAD_START_INTERVAL = 500L;
+		THREAD_COUNT = 10;
+		CHANNEL_USE_PERIOD = 1500L;
+		CHANNEL_WAIT_UNIT_TIME = 150L;
 		START_TIME = System.currentTimeMillis();
 		LogUtil.printLog("*** csmaNPTester ***");
 		String graphTitle = "N-Persistent Channel Use Graph";
